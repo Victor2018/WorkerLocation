@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
     private var mBtnLocation: Button? = null
     private var mBtnNotification: Button? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -79,15 +78,12 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
     }
     @AfterPermissionGranted(REQUEST_CODE_NOTIFICATION_PERMISSION)
     private fun requestNotificationPermission() {
-        Log.e(TAG,"requestNotificationPermission()......")
         if (hasNotificationPermission()) {
-            Log.e(TAG,"requestNotificationPermission()......1")
             // Have permissions, do things!
             showMessage("AfterPermissionGranted you have notification permission,you can send notification")
             //5秒后发送通知
             AlarmUtil.setAlarm(this, System.currentTimeMillis() + 5000)
         } else {
-            Log.e(TAG,"requestNotificationPermission()......2")
             // Ask for both permissions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 EasyPermissions.requestPermissions(
