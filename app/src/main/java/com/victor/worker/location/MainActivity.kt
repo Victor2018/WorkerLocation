@@ -106,7 +106,6 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
         val intent = Intent("android.settings.APP_NOTIFICATION_SETTINGS")
         intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
         startActivity(intent)
-
     }
 
     private fun hasLocationPermission(): Boolean {
