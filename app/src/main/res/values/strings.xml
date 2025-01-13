@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">WorkLocation</string>
+    <string name="permission_location_rationale_message">This app needs access to your location</string>
+    <string name="permission_notification_rationale_message">This app needs access to your notification</string>
+
+
+    <!-- MainActivity -->
+    <string name="returned_from_app_settings_to_activity">
+        Returned from app settings to MainActivity with the following permissions:
+        \n
+        \nLocation &amp; Contacts: %s
+    </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="permission_storage_text">Storage</string>
+
+    <!-- Logs -->
+    <string name="log_permissions_granted">onPermissionsGranted:%d:%d</string>
+    <string name="log_permissions_denied">onPermissionsDenied::%d:%d</string>
+    <string name="log_permission_rationale_accepted">onPermissionRationaleAccepted:%d"</string>
+    <string name="log_permission_rationale_denied">onPermissionRationaleDenied:%d"</string>
+</resources>
