@@ -1,8 +1,9 @@
 package com.victor.worker.location
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,11 +11,14 @@ import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import com.cherry.permissions.lib.dialogs.DEFAULT_SETTINGS_REQ_CODE
 import com.cherry.permissions.lib.dialogs.SettingsDialog
 import com.google.android.material.snackbar.Snackbar
+
 
 class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.PermissionCallbacks,
     EasyPermissions.RationaleCallbacks {
@@ -27,6 +31,8 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
     private var mTvLocation: TextView? = null
     private var mBtnLocation: Button? = null
     private var mBtnNotification: Button? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,38 +73,61 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
                 this,
                 getString(R.string.permission_location_rationale_message),
                 REQUEST_CODE_LOCATION_PERMISSION,
-                "android.permission.ACCESS_FINE_LOCATION"
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
         }
     }
     @AfterPermissionGranted(REQUEST_CODE_NOTIFICATION_PERMISSION)
     private fun requestNotificationPermission() {
+        Log.e(TAG,"requestNotificationPermission()......")
         if (hasNotificationPermission()) {
+            Log.e(TAG,"requestNotificationPermission()......1")
             // Have permissions, do things!
             showMessage("AfterPermissionGranted you have notification permission,you can send notification")
             //5秒后发送通知
             AlarmUtil.setAlarm(this, System.currentTimeMillis() + 5000)
         } else {
+            Log.e(TAG,"requestNotificationPermission()......2")
             // Ask for both permissions
-            EasyPermissions.requestPermissions(
-                this,
-                getString(R.string.permission_notification_rationale_message),
-                REQUEST_CODE_NOTIFICATION_PERMISSION,
-                "android.permission.POST_NOTIFICATIONS"
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                EasyPermissions.requestPermissions(
+                    this,
+                    getString(R.string.permission_notification_rationale_message),
+                    REQUEST_CODE_NOTIFICATION_PERMISSION,
+                    Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                goNotificationPermissionSetting()
+            }
         }
+    }
+
+    // 跳转到应用程序设置页面
+    private fun goNotificationPermissionSetting() {
+        val intent = Intent("android.settings.APP_NOTIFICATION_SETTINGS")
+        intent.putExtra("android.provider.extra.APP_PACKAGE", packageName)
+        startActivity(intent)
+
     }
 
     private fun hasLocationPermission(): Boolean {
         return EasyPermissions.hasPermissions(this,
-            "android.permission.ACCESS_FINE_LOCATION"
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
     }
 
     private fun hasNotificationPermission(): Boolean {
-        return EasyPermissions.hasPermissions(this,
-            "android.permission.POST_NOTIFICATIONS"
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return EasyPermissions.hasPermissions(this,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        }
+        return checkNotificationPermission()
+    }
+
+    // 检查通知权限是否已经被授权
+    private fun checkNotificationPermission(): Boolean {
+        val manager = NotificationManagerCompat.from(this)
+        return manager.areNotificationsEnabled()
     }
 
     fun showMessage(message: String) {
