@@ -6,6 +6,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
@@ -14,7 +16,10 @@ class DefaultLocationClient(
     private val context: Context,
 ): LocationClient {
 
-    private val TAG = "DefaultLocationClient"
+    companion object {
+        private const val TAG = "DefaultLocationClient"
+        private const val MIN_TIME_MS = 10000L
+    }
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
         return callbackFlow {
@@ -32,10 +37,19 @@ class DefaultLocationClient(
 
             try {
                 //监听位置更新
-                locationManager.requestLocationUpdates(provider, 10000, 0f
-                ) { location -> launch { send(location) } }
+                locationManager.requestLocationUpdates(provider, MIN_TIME_MS, 0f
+                ) { location ->
+                    Log.d(TAG,"longitude = ${location.longitude}")
+                    Log.d(TAG,"latitude = ${location.latitude}")
+
+                    launch {
+                        send(location)
+                    }
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+            awaitClose {
             }
         }
     }
