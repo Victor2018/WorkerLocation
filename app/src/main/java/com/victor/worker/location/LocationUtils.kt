@@ -60,4 +60,12 @@ class LocationUtils: LocationListener {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         mOnLocationListener?.OnLocation(address,simpleDateFormat.format(Date(location.time)))
     }
+
+    fun getLocationAddress(location: Location): String {
+        val geocoder = Geocoder(App.get())
+        //根据坐标经纬度获取位置地址信息（WGS-84坐标系）
+        val list = geocoder.getFromLocation(location.latitude,location.longitude,1)
+        val address = list?.firstOrNull()?.getAddressLine(0)
+        return address ?: ""
+    }
 }

@@ -18,6 +18,7 @@ import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import com.cherry.permissions.lib.dialogs.DEFAULT_SETTINGS_REQ_CODE
 import com.cherry.permissions.lib.dialogs.SettingsDialog
 import com.google.android.material.snackbar.Snackbar
+import com.victor.worker.location.core.LocationService
 
 
 class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.PermissionCallbacks,
@@ -61,11 +62,15 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
         if (hasLocationPermission()) {
             // Have permissions, do things!
             showMessage("AfterPermissionGranted you have Location permissions,you can Location")
-            LocationUtils.instance.getLocation(object : OnLocationListener{
+            /*LocationUtils.instance.getLocation(object : OnLocationListener{
                 override fun OnLocation(address: String?, locationTime: String) {
                     mTvLocation?.text = "$address\n$locationTime"
                 }
-            })
+            })*/
+            Intent(applicationContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                startService(this)
+            }
         } else {
             // Ask for both permissions
             EasyPermissions.requestPermissions(
@@ -82,7 +87,15 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
             // Have permissions, do things!
             showMessage("AfterPermissionGranted you have notification permission,you can send notification")
             //5秒后发送通知
-            AlarmUtil.setAlarm(this, System.currentTimeMillis() + 5000)
+//            AlarmUtil.setAlarm(this, System.currentTimeMillis() + 5000)
+            Intent(applicationContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                startService(this)
+            }
+//            Intent(applicationContext, LocationService::class.java).apply {
+//                action = LocationService.ACTION_STOP
+//                startService(this)
+//            }
         } else {
             // Ask for both permissions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
