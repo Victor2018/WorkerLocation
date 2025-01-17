@@ -15,7 +15,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        NotificationUtil.createNotificationChannel(this)
+        NotificationUtil.createNotificationChannel()
     }
 
     fun updateLocation(location: String) {

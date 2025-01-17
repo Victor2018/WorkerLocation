@@ -11,6 +11,7 @@ import android.location.Location
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import java.text.SimpleDateFormat
 
 object NotificationUtil {
 
@@ -24,7 +25,7 @@ object NotificationUtil {
         NotificationManagerCompat.from(App.get())
     }
 
-    fun createNotificationChannel(application: Application) {
+    fun createNotificationChannel() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,

@@ -17,8 +17,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.text.SimpleDateFormat
 
 class LocationService: Service() {
+    private val simpleDateFormat by lazy {
+        SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private lateinit var locationClient: LocationClient
@@ -47,7 +51,8 @@ class LocationService: Service() {
             .getLocationUpdates()
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val address = LocationUtils.instance.getLocationAddress(location)
+                val time = simpleDateFormat.format(System.currentTimeMillis())
+                val address = LocationUtils.instance.getLocationAddress(location) + "\n$time"
                 App.get().updateLocation(address)
 
                 NotificationUtil.sendNotification(notificationBuilder,location,address)
