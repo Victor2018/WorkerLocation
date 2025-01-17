@@ -7,7 +7,7 @@ import android.content.Intent
 
 class AlarmReceiver: BroadcastReceiver() {
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        NotificationUtil.sendNotification(context)
+    override fun onReceive(context: Context, intent: Intent?) {
+//        NotificationUtil.sendNotification(context)
     }
 }

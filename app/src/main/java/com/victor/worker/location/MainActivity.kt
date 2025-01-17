@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Observer
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import com.cherry.permissions.lib.dialogs.DEFAULT_SETTINGS_REQ_CODE
@@ -44,6 +45,13 @@ class MainActivity : AppCompatActivity(),OnClickListener,EasyPermissions.Permiss
         mBtnLocation?.setOnClickListener(this)
         mBtnNotification?.setOnClickListener(this)
 
+        initLocationObserver()
+    }
+
+    fun initLocationObserver() {
+        App.get().locationLiveData.observe(this, Observer {
+            mTvLocation?.text = it
+        })
     }
 
     override fun onClick(v: View?) {

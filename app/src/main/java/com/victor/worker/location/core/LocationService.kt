@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.victor.worker.location.App
 import com.victor.worker.location.LocationUtils
+import com.victor.worker.location.NotificationUtil
+import com.victor.worker.location.NotificationUtil.cancelNotifications
 import com.victor.worker.location.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,34 +41,27 @@ class LocationService: Service() {
     }
 
     private fun start() {
-        val notification = NotificationCompat.Builder(this, "location")
-            .setContentTitle("Tracking location...")
-            .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setOngoing(true)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationUtil.getNotificationBuilder(this)
 
         locationClient
-            .getLocationUpdates(10000L)
+            .getLocationUpdates()
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
-                val lat = location.latitude.toString().takeLast(3)
-                val long = location.longitude.toString().takeLast(3)
                 val address = LocationUtils.instance.getLocationAddress(location)
-                val updatedNotification = notification.setContentText(
-                    "Location: ($lat, $long)\naddress:$address"
-                )
-                notificationManager.notify(1, updatedNotification.build())
+                App.get().updateLocation(address)
+
+                NotificationUtil.sendNotification(notificationBuilder,location,address)
             }
             .launchIn(serviceScope)
 
-        startForeground(1, notification.build())
+        startForeground(NotificationUtil.NOTIFICATION_ID, notificationBuilder.build())
     }
+
 
     private fun stop() {
         stopForeground(true)
         stopSelf()
+        cancelNotifications()
     }
 
     override fun onDestroy() {

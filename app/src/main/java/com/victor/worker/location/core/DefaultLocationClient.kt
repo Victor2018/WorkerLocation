@@ -18,10 +18,10 @@ class DefaultLocationClient(
 
     companion object {
         private const val TAG = "DefaultLocationClient"
-        private const val MIN_TIME_MS = 10000L
+        const val LOCATION_UPDATE_INTERVAL = 3 * 60 * 1000L//每3分钟刷新一次位置
     }
     @SuppressLint("MissingPermission")
-    override fun getLocationUpdates(interval: Long): Flow<Location> {
+    override fun getLocationUpdates(): Flow<Location> {
         return callbackFlow {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -37,7 +37,7 @@ class DefaultLocationClient(
 
             try {
                 //监听位置更新
-                locationManager.requestLocationUpdates(provider, MIN_TIME_MS, 0f
+                locationManager.requestLocationUpdates(provider, LOCATION_UPDATE_INTERVAL, 0f
                 ) { location ->
                     Log.d(TAG,"longitude = ${location.longitude}")
                     Log.d(TAG,"latitude = ${location.latitude}")
