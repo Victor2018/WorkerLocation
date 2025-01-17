@@ -49,7 +49,7 @@ object NotificationUtil {
             .setTimeoutAfter(NOTIFICATION_TIME_OUT_AFTER)//定时取消，8.0及以后
             .setVisibility(NotificationCompat.VISIBILITY_SECRET)//屏幕可见性，适用“锁屏状态”
             .setVibrate(longArrayOf(0,300,500,700))//延迟0ms，然后振动300ms，在延迟500ms，接着在振动700ms
-            .setOngoing(true)//notification就能够一直停留在系统的通知栏直到cancel或者应用退出
+//            .setOngoing(true)//notification就能够一直停留在系统的通知栏直到cancel或者应用退出
     }
 
     fun getContentIntent(context: Context): PendingIntent {
